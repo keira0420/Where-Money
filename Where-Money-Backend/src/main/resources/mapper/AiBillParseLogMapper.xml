@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+AI账单解析日志映射器
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.AiBillParseLogMapper">
+    <!--
+    AI账单解析日志结果映射
+    -->
+    <resultMap id="AiBillParseLogResultMap" type="shuhuai.wheremoney.entity.AiBillParseLog">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" javaType="Integer" property="userId"/>
+        <result column="book_id" jdbcType="INTEGER" javaType="Integer" property="bookId"/>
+        <result column="type" javaType="shuhuai.wheremoney.type.BillType" property="type"
+                typeHandler="shuhuai.wheremoney.type.BillTypeHandler"/>
+        <result column="input_text" jdbcType="LONGVARCHAR" javaType="String" property="inputText"/>
+        <result column="model_name" jdbcType="VARCHAR" javaType="String" property="modelName"/>
+        <result column="status" jdbcType="VARCHAR" javaType="String" property="status"/>
+        <result column="error_code" jdbcType="VARCHAR" javaType="String" property="errorCode"/>
+        <result column="error_message" jdbcType="VARCHAR" javaType="String" property="errorMessage"/>
+        <result column="llm_raw_json" jdbcType="LONGVARCHAR" javaType="String" property="llmRawJson"/>
+        <result column="latency_ms" jdbcType="BIGINT" javaType="Long" property="latencyMs"/>
+        <result column="create_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" property="createTime"/>
+    </resultMap>
+
+    <!--
+    选择性插入AI账单解析日志
+    -->
+    <insert id="insertAiBillParseLogSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.AiBillParseLog">
+        insert into ai_bill_parse_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="inputText != null">
+                input_text,
+            </if>
+            <if test="modelName != null">
+                model_name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="errorCode != null">
+                error_code,
+            </if>
+            <if test="errorMessage != null">
+                error_message,
+            </if>
+            <if test="llmRawJson != null">
+                llm_raw_json,
+            </if>
+            <if test="latencyMs != null">
+                latency_ms,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="bookId != null">
+                #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="inputText != null">
+                #{inputText,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="modelName != null">
+                #{modelName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="errorCode != null">
+                #{errorCode,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null">
+                #{errorMessage,jdbcType=VARCHAR},
+            </if>
+            <if test="llmRawJson != null">
+                #{llmRawJson,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="latencyMs != null">
+                #{latencyMs,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+账本映射器
+用于处理账本相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.BookMapper">
+    <!--
+    账本结果映射
+    将数据库查询结果映射到Book实体类
+    -->
+    <resultMap id="BookResultMap" type="shuhuai.wheremoney.entity.Book">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" javaType="Integer" property="userId"/>
+        <result column="title" jdbcType="VARCHAR" javaType="String" property="title"/>
+        <result column="create_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" property="createTime"/>
+        <result column="begin_date" jdbcType="INTEGER" javaType="Integer" property="beginDate"/>
+        <result column="total_budget" jdbcType="DECIMAL" javaType="BigDecimal" property="totalBudget"/>
+        <result column="used_budget" jdbcType="DECIMAL" javaType="BigDecimal" property="usedBudget"/>
+    </resultMap>
+
+    <!--
+    选择性插入账本
+    根据传入的Book对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertBookSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.Book">
+        insert into book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="beginDate != null">
+                begin_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="beginDate != null">
+                #{beginDate,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    更新账本预算
+    根据账本ID，更新总预算和已用预算
+    -->
+    <update id="updateTotalBudgetByBook">
+        update book
+        <set>
+            <if test="totalBudget != null">
+                total_budget = #{totalBudget,jdbcType=DECIMAL},
+            </if>
+            <if test="usedBudget != null">
+                used_budget = #{usedBudget,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    相对更新已用预算
+    根据账本ID，将已用预算增加指定的相对值
+    -->
+    <update id="updateUsedBudgetRelativeById">
+        update book
+        <set>
+            used_budget = used_budget + #{relativeValue,jdbcType=DECIMAL}
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    查询账本总预算
+    根据账本ID，查询总预算金额
+    -->
+    <select id="selectTotalBudgetByBook"
+            resultType="java.math.BigDecimal">
+        select total_budget
+        from book
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据ID查询账本
+    查询指定ID的账本详情
+    -->
+    <select id="selectBookById" resultMap="BookResultMap" parameterType="Integer">
+        select *
+        from book
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据用户查询账本
+    查询指定用户的所有账本
+    -->
+    <select id="selectBookByUser" parameterType="shuhuai.wheremoney.entity.User" resultMap="BookResultMap">
+        select *
+        from book
+        where user_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据用户和标题查询账本
+    查询指定用户中指定标题的账本
+    -->
+    <select id="selectBookByUserTitle" resultMap="BookResultMap">
+        select *
+        from book
+        where user_id = #{user.id,jdbcType=INTEGER}
+          and title = #{title,jdbcType=VARCHAR}
+    </select>
+
+    <!--
+    查询账本月度支出
+    根据账本ID和月份，查询该月的支出金额（扣除退款）
+    -->
+    <select id="selectPayMonthByBookId" resultType="java.math.BigDecimal">
+        select ifnull(month_pay.pay_amount, 0) - ifnull(month_refund.refund_amount, 0)
+        from (select ifnull(sum(amount), 0) as pay_amount
+              from pay_bill
+              where date_format(bill_time, '%Y%m') = date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m')
+                and book_id = #{bookId,jdbcType=INTEGER}) as month_pay,
+             (select ifnull(sum(amount), 0) as refund_amount
+              from refund_bill
+              where pay_bill_id in (select id
+                                    from pay_bill
+                                    where date_format(bill_time, '%Y%m') =
+                                          date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m'))
+                and book_id = #{bookId,jdbcType=INTEGER}) as month_refund;
+    </select>
+
+    <!--
+    查询账本月度收入
+    根据账本ID和月份，查询该月的收入金额
+    -->
+    <select id="selectIncomeMonthByBookId" resultType="java.math.BigDecimal">
+        select ifnull(sum(amount), 0)
+        from income_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and date_format(bill_time, '%Y%m') = date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m')
+    </select>
+
+    <!--
+    查询账本月度余额
+    根据账本ID和月份，查询该月的余额（收入 - 支出 + 退款）
+    -->
+    <select id="selectBalanceMonthByBookId" resultType="java.math.BigDecimal">
+        select ifnull(month_income.income_amount, 0) - ifnull(month_pay.pay_amount, 0) +
+               ifnull(month_refund.refund_amount, 0)
+        from (select ifnull(sum(amount), 0) as pay_amount
+              from pay_bill
+              where date_format(bill_time, '%Y%m') = date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m')
+                and book_id = #{bookId,jdbcType=INTEGER}) as month_pay,
+             (select ifnull(sum(amount), 0) as refund_amount
+              from refund_bill
+              where pay_bill_id in (select id
+                                    from pay_bill
+                                    where date_format(bill_time, '%Y%m') =
+                                          date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m'))
+                and book_id = #{bookId,jdbcType=INTEGER}) as month_refund,
+             (select ifnull(sum(amount), 0) as income_amount
+              from income_bill
+              where date_format(bill_time, '%Y%m') = date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m')
+                and book_id = #{bookId,jdbcType=INTEGER}) as month_income;
+    </select>
+
+    <!--
+    查询账本月度退款
+    根据账本ID和月份，查询该月的退款金额
+    -->
+    <select id="selectRefundMonthByBookId" resultType="java.math.BigDecimal">
+        select ifnull(sum(amount), 0)
+        from refund_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and date_format(bill_time, '%Y%m') = date_format(#{month,jdbcType=TIMESTAMP}, '%Y%m')
+    </select>
+
+    <!--
+    删除账本
+    根据ID删除指定的账本
+    -->
+    <delete id="deleteBook" parameterType="Integer">
+        delete
+        from book
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

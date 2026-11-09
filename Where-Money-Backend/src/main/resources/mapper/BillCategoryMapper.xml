@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+账单分类映射器
+用于处理账单分类相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.BillCategoryMapper">
+    <!--
+    账单分类结果映射
+    将数据库查询结果映射到BillCategory实体类
+    -->
+    <resultMap id="BillCategoryResultMap" type="shuhuai.wheremoney.entity.BillCategory">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="book_id" jdbcType="INTEGER" javaType="Integer" property="bookId"/>
+        <result column="bill_category_name" jdbcType="VARCHAR" javaType="String" property="billCategoryName"/>
+        <result column="svg" jdbcType="LONGVARCHAR" javaType="String" property="svg"/>
+        <result column="type" javaType="shuhuai.wheremoney.type.BillType" property="type"
+                typeHandler="shuhuai.wheremoney.type.BillTypeHandler"/>
+    </resultMap>
+
+    <!--
+    选择性插入账单分类
+    根据传入的BillCategory对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertBillCategorySelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.BillCategory">
+        insert into bill_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="billCategoryName != null">
+                bill_category_name,
+            </if>
+            <if test="svg != null">
+                svg,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="billCategoryName != null">
+                #{billCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="svg != null">
+                #{svg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    根据账本ID查询账单分类
+    查询指定账本的所有账单分类
+    -->
+    <select id="selectBillCategoryByBook"
+            resultMap="BillCategoryResultMap">
+        select *
+        from bill_category
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据账本ID和类型查询账单分类
+    查询指定账本中指定类型的账单分类
+    -->
+    <select id="selectBillCategoryByBookType"
+            resultMap="BillCategoryResultMap">
+        select *
+        from bill_category
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and type = #{type,jdbcType=VARCHAR}
+    </select>
+
+    <!--
+    根据ID查询账单分类
+    查询指定ID的账单分类详情
+    -->
+    <select id="selectBillCategoryById" resultMap="BillCategoryResultMap">
+        select *
+        from bill_category
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    删除账单分类
+    根据ID删除指定的账单分类
+    -->
+    <delete id="deleteBillCategory">
+        delete
+        from bill_category
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--
+    选择性更新账单分类
+    根据传入的BillCategory对象属性，选择性地更新数据
+    -->
+    <update id="updateBillCategorySelective">
+        update bill_category
+        <set>
+            <if test="billCategoryName != null">
+                bill_category_name = #{billCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="svg != null">
+                svg = #{svg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="bookId != null">
+                book_id = #{bookId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据账本ID、名称和类型查询账单分类
+    查询指定账本中指定名称和类型的账单分类
+    -->
+    <select id="selectBillCategoryByBookIdNameType" resultMap="BillCategoryResultMap">
+        select *
+        from bill_category
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_category_name = #{billCategoryName,jdbcType=VARCHAR}
+          and type = #{type,jdbcType=VARCHAR}
+    </select>
+
+    <!--
+    根据账本ID删除账单分类
+    删除指定账本的所有账单分类
+    -->
+    <delete id="deleteBillCategoryByBookId" parameterType="Integer">
+        delete
+        from bill_category
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </delete>
+</mapper>

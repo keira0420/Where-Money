@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+资产映射器
+用于处理资产相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.AssetMapper">
+    <!--
+    资产结果映射
+    将数据库查询结果映射到Asset实体类
+    -->
+    <resultMap id="AssetResultMap" type="shuhuai.wheremoney.entity.Asset">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" javaType="Integer" property="userId"/>
+        <result column="type" javaType="shuhuai.wheremoney.type.AssetType" property="type"
+                typeHandler="shuhuai.wheremoney.type.AssetTypeHandler"/>
+        <result column="balance" jdbcType="DECIMAL" javaType="BigDecimal" property="balance"/>
+        <result column="asset_name" jdbcType="VARCHAR" javaType="String" property="assetName"/>
+        <result column="bill_date" jdbcType="INTEGER" javaType="Integer" property="billDate"/>
+        <result column="repay_date" jdbcType="INTEGER" javaType="Integer" property="repayDate"/>
+        <result column="quota" jdbcType="DECIMAL" javaType="BigDecimal" property="quota"/>
+        <result column="in_total" jdbcType="BOOLEAN" javaType="Boolean" property="inTotal"/>
+        <result column="svg" jdbcType="VARCHAR" javaType="String" property="svg"/>
+    </resultMap>
+
+    <!--
+    选择性插入资产
+    根据传入的Asset对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertAssetSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.Asset">
+        insert into asset
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="balance != null">
+                balance,
+            </if>
+            <if test="assetName != null">
+                asset_name,
+            </if>
+            <if test="billDate != null">
+                bill_date,
+            </if>
+            <if test="repayDate != null">
+                repay_date,
+            </if>
+            <if test="quota != null">
+                quota,
+            </if>
+            <if test="inTotal != null">
+                in_Total,
+            </if>
+            <if test="svg != null">
+                svg,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="balance != null">
+                #{balance,jdbcType=DECIMAL},
+            </if>
+            <if test="assetName != null">
+                #{assetName,jdbcType=VARCHAR},
+            </if>
+            <if test="billDate != null">
+                #{billDate,jdbcType=INTEGER},
+            </if>
+            <if test="repayDate != null">
+                #{repayDate,jdbcType=INTEGER},
+            </if>
+            <if test="quota != null">
+                #{quota,jdbcType=DECIMAL},
+            </if>
+            <if test="inTotal != null">
+                #{inTotal,jdbcType=BOOLEAN},
+            </if>
+            <if test="svg != null">
+                #{svg,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    根据ID选择性更新资产
+    根据传入的Asset对象属性，选择性地更新数据
+    -->
+    <update id="updateAssetSelectiveById" parameterType="shuhuai.wheremoney.entity.Asset">
+        update asset
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="balance != null">
+                balance = #{balance,jdbcType=DECIMAL},
+            </if>
+            <if test="assetName != null">
+                asset_name = #{assetName,jdbcType=VARCHAR},
+            </if>
+            <if test="billDate != null">
+                bill_date = #{billDate,jdbcType=INTEGER},
+            </if>
+            <if test="repayDate != null">
+                repay_date = #{repayDate,jdbcType=INTEGER},
+            </if>
+            <if test="quota != null">
+                quota = #{quota,jdbcType=DECIMAL},
+            </if>
+            <if test="inTotal != null">
+                in_Total = #{inTotal,jdbcType=BOOLEAN},
+            </if>
+            <if test="svg != null">
+                svg = #{svg,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据ID相对更新余额
+    将指定资产的余额增加指定的相对值
+    -->
+    <update id="updateBalanceRelativeById">
+        update asset
+        set balance = balance + #{relativeValue,jdbcType=DECIMAL}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据用户ID查询资产
+    查询指定用户的所有资产
+    -->
+    <select id="selectAssetByUserId" resultMap="AssetResultMap">
+        select *
+        from asset
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据ID查询资产
+    查询指定ID的资产详情
+    -->
+    <select id="selectAssetById" resultMap="AssetResultMap">
+        select *
+        from asset
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据用户ID查询总资产
+    查询指定用户的所有资产余额总和
+    如果没有资产，返回0
+    -->
+    <select id="selectTotalAssetByUserId" resultType="java.math.BigDecimal">
+        select ifnull(sum(balance), 0)
+        from asset
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+</mapper>

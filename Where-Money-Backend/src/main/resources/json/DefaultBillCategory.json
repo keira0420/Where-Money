@@ -1,0 +1,214 @@
+{
+  "DefaultBillCategory": [
+    {
+      "billCategoryName": "三餐",
+      "svg": "fluent:food-24-filled",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "零食",
+      "svg": "fa6-solid:hotdog",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "交通",
+      "svg": "ic:baseline-directions-bus",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "衣服",
+      "svg": "ion:shirt",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "宠物",
+      "svg": "fa6-solid:dog",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "日用品",
+      "svg": "fa6-solid:toilet-paper",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "旅行",
+      "svg": "fluent:airplane-take-off-24-filled",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "孩子",
+      "svg": "ic:baseline-child-care",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "话费网费",
+      "svg": "ic:round-local-phone",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "烟酒",
+      "svg": "fa6-solid:wine-glass",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "学习",
+      "svg": "ic:round-menu-book",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "住房",
+      "svg": "fa6-solid:house-chimney",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "美妆",
+      "svg": "mdi:lipstick",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "医疗",
+      "svg": "fa6-solid:briefcase-medical",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "发红包",
+      "svg": "ant-design:red-envelope-filled",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "汽车/加油",
+      "svg": "fluent:gas-pump-24-filled",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "娱乐",
+      "svg": "fa6-solid:gamepad",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "送礼",
+      "svg": "fa6-solid:gift",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "电器数码",
+      "svg": "ic:round-photo-camera",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "运动",
+      "svg": "ion:ios-basketball",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "其它",
+      "svg": "fluent:table-freeze-column-and-row-24-filled",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "水电煤",
+      "svg": "ion:waterdrop",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "饮料",
+      "svg": "bxs:drink",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "饰品",
+      "svg": "icon-park-twotone:diamond-ring",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "付费会员",
+      "svg": "mdi:crown",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "请客",
+      "svg": "bx:bxs-dish",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "手续费",
+      "svg": "majesticons:money-hand-line",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "药品",
+      "svg": "ri:medicine-bottle-fill",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "家具",
+      "svg": "map:furniture-store",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "清洁",
+      "svg": "eos-icons:cleanup",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "文具",
+      "svg": "mdi:lead-pencil",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "快递",
+      "svg": "carbon:delivery-parcel",
+      "type": "支出"
+    },
+    {
+      "billCategoryName": "工资",
+      "svg": "healthicons:money-bag",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "生活费",
+      "svg": "ri:money-cny-box-fill",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "收红包",
+      "svg": "ant-design:red-envelope-filled",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "外快",
+      "svg": "fluent:person-money-24-filled",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "股票基金",
+      "svg": "icon-park-solid:chart-stock",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "其它",
+      "svg": "fluent:table-freeze-column-and-row-24-filled",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "退款",
+      "svg": "mdi:cash-refund",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "利息",
+      "svg": "la:coins",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "补贴",
+      "svg": "ant-design:money-collect-filled",
+      "type": "收入"
+    },
+    {
+      "billCategoryName": "二手",
+      "svg": "ant-design:shopping-filled",
+      "type": "收入"
+    }
+  ]
+}

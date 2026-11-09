@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "token.youngToken",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "token.privateKey",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "token.oldToken",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "redis.billCategory.expire",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "redis.asset.expire",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "redis.bill.expire",
+      "type": "java.lang.Long"
+    }
+  ]
+}

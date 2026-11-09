@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+预算映射器
+用于处理预算相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.BudgetMapper">
+    <!--
+    预算结果映射
+    将数据库查询结果映射到Budget实体类
+    -->
+    <resultMap id="BudgetResultMap" type="shuhuai.wheremoney.entity.Budget">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="book_id" jdbcType="INTEGER" javaType="Integer" property="bookId"/>
+        <result column="bill_category_id" jdbcType="INTEGER" javaType="Integer" property="billCategoryId"/>
+        <result column="used" jdbcType="DECIMAL" javaType="BigDecimal" property="used"/>
+        <result column="limit_amount" jdbcType="DECIMAL" javaType="BigDecimal" property="limit"/>
+        <result column="times" jdbcType="INTEGER" javaType="Integer" property="times"/>
+    </resultMap>
+
+    <!--
+    插入预算
+    根据传入的Budget对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertBudget" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.Budget">
+        insert into budget
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="billCategoryId != null">
+                bill_category_id,
+            </if>
+            <if test="limit != null">
+                limit_amount,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="billCategoryId != null">
+                #{billCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="limit != null">
+                #{limit,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    相对更新预算使用金额
+    根据分类ID，将预算使用金额增加指定的相对值
+    -->
+    <update id="updateUsedRelativeByCategoryId">
+        update budget
+        <set>
+            used = used + #{relativeValue,jdbcType=DECIMAL}
+        </set>
+        where bill_category_id = #{billCategoryId,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    相对更新预算使用次数
+    根据分类ID，将预算使用次数增加指定的相对值
+    -->
+    <update id="updateTimesRelativeByCategoryId">
+        update budget
+        <set>
+            times = times + #{relativeValue,jdbcType=INTEGER}
+        </set>
+        where bill_category_id = #{billCategoryId,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据账本ID查询预算
+    查询指定账本的所有预算
+    -->
+    <select id="selectBudgetsByBook"
+            resultMap="BudgetResultMap">
+        select *
+        from budget
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    查询账本预算总额
+    根据账本ID，查询所有预算的限额总和
+    如果没有预算，返回0
+    -->
+    <select id="selectLimitSumByBook"
+            resultType="java.math.BigDecimal">
+        select ifnull(sum(limit_amount), 0)
+        from budget
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据ID查询预算
+    查询指定ID的预算详情
+    -->
+    <select id="selectBudgetById"
+            resultMap="BudgetResultMap">
+        select *
+        from budget
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据分类ID查询预算
+    查询指定分类的预算详情
+    -->
+    <select id="selectBudgetByCategoryId"
+            resultMap="BudgetResultMap">
+        select *
+        from budget
+        where bill_category_id = #{billCategoryId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据ID更新预算
+    根据传入的Budget对象属性，选择性地更新数据
+    -->
+    <update id="updateBudgetById" parameterType="shuhuai.wheremoney.entity.Budget">
+        update budget
+        <set>
+            <if test="billCategoryId != null">
+                bill_category_id = #{billCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="used != null">
+                used = #{used,jdbcType=DECIMAL},
+            </if>
+            <if test="limit != null">
+                limit_amount = #{limit,jdbcType=DECIMAL},
+            </if>
+            <if test="times != null">
+                times = #{times,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据ID删除预算
+    删除指定ID的预算
+    -->
+    <delete id="deleteBudgetById">
+        delete
+        from budget
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--
+    根据账本ID删除预算
+    删除指定账本的所有预算
+    -->
+    <delete id="deleteBudgetByBookId" parameterType="Integer">
+        delete
+        from budget
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </delete>
+</mapper>

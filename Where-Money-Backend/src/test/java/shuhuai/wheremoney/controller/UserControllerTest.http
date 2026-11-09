@@ -1,0 +1,16 @@
+###
+POST http://localhost:5050/api/user/login
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="userName"
+Content-Type: text/plain
+
+demo@example.test
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+Content-Type: text/plain
+
+example-password
+
+<> 2023-01-08T202133.200.json

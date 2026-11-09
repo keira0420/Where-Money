@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+支出账单映射器
+用于处理支出账单相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.PayBillMapper">
+    <!--
+    支出账单结果映射
+    将数据库查询结果映射到PayBill实体类
+    -->
+    <resultMap id="PayBillResultMap" type="shuhuai.wheremoney.entity.PayBill">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="book_id" jdbcType="INTEGER" javaType="Integer" property="bookId"/>
+        <result column="pay_asset_id" jdbcType="INTEGER" javaType="Integer" property="payAssetId"/>
+        <result column="bill_category_id" jdbcType="INTEGER" javaType="Integer" property="billCategoryId"/>
+        <result column="amount" jdbcType="DECIMAL" javaType="BigDecimal" property="amount"/>
+        <result column="bill_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" property="billTime"/>
+        <result column="remark" jdbcType="VARCHAR" javaType="String" property="remark"/>
+        <result column="refunded" jdbcType="BOOLEAN" javaType="Boolean" property="refunded"/>
+        <result column="image" property="image" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>
+        <result column="image_content_type" jdbcType="VARCHAR" javaType="String" property="imageContentType"/>
+    </resultMap>
+
+    <!--
+    选择性插入支出账单
+    根据传入的PayBill对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertPayBillSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.PayBill">
+        insert into pay_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="payAssetId != null">
+                pay_asset_id,
+            </if>
+            <if test="billCategoryId != null">
+                bill_category_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="billTime != null">
+                bill_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="refunded != null">
+                refunded,
+            </if>
+            <if test="image != null">
+                image,
+            </if>
+            <if test="imageContentType != null">
+                image_content_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="payAssetId != null">
+                #{payAssetId,jdbcType=INTEGER},
+            </if>
+            <if test="billCategoryId != null">
+                #{billCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="billTime != null">
+                #{billTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="refunded != null">
+                #{refunded,jdbcType=BOOLEAN},
+            </if>
+            <if test="image != null">
+                #{image,jdbcType=BLOB},
+            </if>
+            <if test="imageContentType != null">
+                #{imageContentType,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    根据ID删除支出账单
+    删除指定ID的支出账单
+    -->
+    <delete id="deletePayBillById" parameterType="Integer">
+        delete
+        from pay_bill
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--
+    选择性更新支出账单
+    根据传入的PayBill对象属性，选择性地更新数据
+    -->
+    <update id="updatePayBillByIdSelective">
+        update pay_bill
+        <set>
+            <if test="bookId != null">
+                book_id = #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="payAssetId != null">
+                pay_asset_id = #{payAssetId,jdbcType=INTEGER},
+            </if>
+            <if test="billCategoryId != null">
+                bill_category_id = #{billCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="billTime != null">
+                bill_time = #{billTime,jdbcType=DATE},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="refunded != null">
+                refunded = #{refunded,jdbcType=BOOLEAN},
+            </if>
+            <if test="image != null">
+                image = #{image,jdbcType=BLOB},
+            </if>
+            <if test="imageContentType != null">
+                image_content_type = #{imageContentType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    更新支出账单
+    全量更新支出账单数据
+    -->
+    <update id="updatePayBillById" parameterType="shuhuai.wheremoney.entity.PayBill">
+        update pay_bill
+        <set>
+            book_id = #{bookId,jdbcType=INTEGER},
+            pay_asset_id = #{payAssetId,jdbcType=INTEGER},
+            bill_category_id = #{billCategoryId,jdbcType=INTEGER},
+            amount = #{amount,jdbcType=DECIMAL},
+            bill_time = #{billTime,jdbcType=DATE},
+            remark = #{remark,jdbcType=VARCHAR},
+            refunded = #{refunded,jdbcType=BOOLEAN},
+            image = #{image,jdbcType=BLOB},
+            image_content_type = #{imageContentType,jdbcType=VARCHAR},
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据账本ID查询支出账单
+    查询指定账本的所有支出账单，按时间倒序排序
+    -->
+    <select id="selectPayBillByBookId" resultMap="PayBillResultMap">
+        select *
+        from pay_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+        order by bill_time desc
+    </select>
+
+    <!--
+    根据账本ID和时间范围查询支出账单
+    查询指定账本在指定时间范围内的所有支出账单，按时间倒序排序
+    -->
+    <select id="selectPayBillByBookIdTime" resultMap="PayBillResultMap">
+        select *
+        from pay_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+          and bill_time &lt; #{endTime,jdbcType=TIMESTAMP}
+        order by bill_time desc
+    </select>
+
+    <!--
+    根据ID查询支出账单
+    查询指定ID的支出账单详情
+    -->
+    <select id="selectPayBillById" resultMap="PayBillResultMap">
+        select *
+        from pay_bill
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据ID查询支出账单（加锁）
+    查询指定ID的支出账单详情，并对记录加锁，用于并发操作
+    -->
+    <select id="selectPayBillByIdForUpdate" resultMap="PayBillResultMap">
+        select *
+        from pay_bill
+        where id = #{id,jdbcType=INTEGER}
+        for update
+    </select>
+
+    <!--
+    根据账本ID和分类ID查询支出账单
+    查询指定账本中指定分类的所有支出账单
+    -->
+    <select id="selectPayBillByBookIdCategory" resultMap="PayBillResultMap">
+        select *
+        from pay_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_category_id = #{billCategoryId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据账本ID和分类ID查询支出账单ID列表
+    查询指定账本中指定分类的所有支出账单的ID
+    -->
+    <select id="selectPayBillIdsByBookIdCategory" resultType="java.lang.Integer">
+        select id
+        from pay_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_category_id = #{billCategoryId,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    更新支出账单分类
+    根据账本ID，将指定旧分类的所有支出账单更新为新分类
+    -->
+    <update id="updatePayBillCategoryByBookIdCategory">
+        update pay_bill
+        set bill_category_id = #{newBillCategoryId,jdbcType=INTEGER}
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_category_id = #{oldBillCategoryId,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据账本ID删除支出账单
+    删除指定账本的所有支出账单
+    -->
+    <delete id="deletePayBillByBookId" parameterType="Integer">
+        delete
+        from pay_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </delete>
+</mapper>

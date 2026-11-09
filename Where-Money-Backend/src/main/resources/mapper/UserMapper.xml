@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+用户映射器
+用于处理用户相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.UserMapper">
+    <!--
+    用户结果映射
+    将数据库查询结果映射到User实体类
+    -->
+    <resultMap id="UserResultMap" type="shuhuai.wheremoney.entity.User">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" javaType="String" property="userName"/>
+        <result column="hashed_password" jdbcType="VARCHAR" javaType="String" property="hashedPassword"/>
+        <result column="is_active" jdbcType="BOOLEAN" javaType="Boolean" property="isActive"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <!--
+    插入用户
+    插入用户信息，包括用户名、哈希密码、激活状态和创建时间
+    使用生成的主键值
+    -->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user (user_name, hashed_password, is_active, create_time)
+        values (#{userName,jdbcType=VARCHAR}, #{hashedPassword,jdbcType=VARCHAR},
+                #{isActive,jdbcType=BOOLEAN}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <!--
+    选择性插入用户
+    根据传入的User对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertUserSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="hashedPassword != null">
+                hashed_password,
+            </if>
+            <if test="isActive != null">
+                is_active,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="hashedPassword != null">
+                #{hashedPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isActive != null">
+                #{isActive,jdbcType=BOOLEAN},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    根据用户ID删除用户
+    删除指定ID的用户
+    -->
+    <delete id="deleteUserByUserId">
+        delete
+        from user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--
+    根据ID更新用户
+    全量更新用户信息，包括用户名、哈希密码、激活状态和创建时间
+    -->
+    <update id="updateUserById">
+        update user
+        set user_name       = #{userName,jdbcType=VARCHAR},
+            hashed_password = #{hashedPassword,jdbcType=VARCHAR},
+            is_active       = #{isActive,jdbcType=BOOLEAN},
+            create_time     = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    选择性更新用户
+    根据传入的User对象属性，选择性地更新数据
+    -->
+    <update id="updateUserSelectiveById" parameterType="shuhuai.wheremoney.entity.User">
+        update user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="hashedPassword != null">
+                hashed_password = #{hashedPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isActive != null">
+                is_active = #{isActive,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据用户名查询用户
+    查询指定用户名的用户信息
+    -->
+    <select id="selectUserByUserName" resultMap="UserResultMap">
+        select *
+        from user
+        where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <!--
+    根据用户ID查询用户
+    查询指定ID的用户信息
+    -->
+    <select id="selectUserByUserId" resultMap="UserResultMap">
+        select *
+        from user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+退款账单映射器
+用于处理退款账单相关的数据库操作
+-->
+<mapper namespace="shuhuai.wheremoney.mapper.RefundBillMapper">
+    <select id="selectRefundBillByIdForUpdate" resultMap="RefundBillResultMap">
+        select * from refund_bill where id=#{id} for update
+    </select>
+    <!--
+    退款账单结果映射
+    将数据库查询结果映射到RefundBill实体类
+    -->
+    <resultMap id="RefundBillResultMap" type="shuhuai.wheremoney.entity.RefundBill">
+        <id column="id" jdbcType="INTEGER" javaType="Integer" property="id"/>
+        <result column="book_id" jdbcType="INTEGER" javaType="Integer" property="bookId"/>
+        <result column="pay_bill_id" jdbcType="INTEGER" javaType="Integer" property="payBillId"/>
+        <result column="refund_asset_id" jdbcType="INTEGER" javaType="Integer" property="refundAssetId"/>
+        <result column="amount" jdbcType="DECIMAL" javaType="BigDecimal" property="amount"/>
+        <result column="bill_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" property="billTime"/>
+        <result column="remark" jdbcType="VARCHAR" javaType="String" property="remark"/>
+        <result column="image" property="image" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>
+        <result column="image_content_type" jdbcType="VARCHAR" javaType="String" property="imageContentType"/>
+    </resultMap>
+
+    <!--
+    选择性插入退款账单
+    根据传入的RefundBill对象属性，选择性地插入数据
+    使用生成的主键值
+    -->
+    <insert id="insertRefundBillSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="shuhuai.wheremoney.entity.RefundBill">
+        insert into refund_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="payBillId != null">
+                pay_bill_id,
+            </if>
+            <if test="refundAssetId != null">
+                refund_asset_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="billTime != null">
+                bill_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="image != null">
+                image,
+            </if>
+            <if test="imageContentType != null">
+                image_content_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="payBillId != null">
+                #{payBillId,jdbcType=INTEGER},
+            </if>
+            <if test="refundAssetId != null">
+                #{refundAssetId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="billTime != null">
+                #{billTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                #{image,jdbcType=BLOB},
+            </if>
+            <if test="imageContentType != null">
+                #{imageContentType,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!--
+    根据ID删除退款账单
+    删除指定ID的退款账单
+    -->
+    <delete id="deleteRefundBillById" parameterType="Integer">
+        delete
+        from refund_bill
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--
+    选择性更新退款账单
+    根据传入的RefundBill对象属性，选择性地更新数据
+    -->
+    <update id="updateRefundBillByIdSelective" parameterType="shuhuai.wheremoney.entity.RefundBill">
+        update refund_bill
+        <set>
+            <if test="bookId != null">
+                book_id = #{bookId,jdbcType=INTEGER},
+            </if>
+            <if test="payBillId != null">
+                pay_bill_id = #{payBillId,jdbcType=INTEGER},
+            </if>
+            <if test="refundAssetId != null">
+                refund_asset_id = #{refundAssetId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="billTime != null">
+                bill_time = #{billTime,jdbcType=DATE},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                image = #{image,jdbcType=BLOB},
+            </if>
+            <if test="imageContentType != null">
+                image_content_type = #{imageContentType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    更新退款账单
+    全量更新退款账单数据
+    -->
+    <update id="updateRefundBillById" parameterType="shuhuai.wheremoney.entity.RefundBill">
+        update refund_bill
+        <set>
+            book_id = #{bookId,jdbcType=INTEGER},
+            pay_bill_id = #{payBillId,jdbcType=INTEGER},
+            refund_asset_id = #{refundAssetId,jdbcType=INTEGER},
+            amount = #{amount,jdbcType=DECIMAL},
+            bill_time = #{billTime,jdbcType=DATE},
+            remark = #{remark,jdbcType=VARCHAR},
+            image = #{image,jdbcType=BLOB},
+            image_content_type = #{imageContentType,jdbcType=VARCHAR},
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--
+    根据账本ID查询退款账单
+    查询指定账本的所有退款账单，按时间倒序排序
+    -->
+    <select id="selectRefundBillByBookId" resultMap="RefundBillResultMap">
+        select *
+        from refund_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+        order by bill_time desc
+    </select>
+
+    <!--
+    根据账本ID和时间范围查询退款账单
+    查询指定账本在指定时间范围内的所有退款账单，按时间倒序排序
+    -->
+    <select id="selectRefundBillByBookIdTime" resultMap="RefundBillResultMap">
+        select *
+        from refund_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+          and bill_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+          and bill_time &lt; #{endTime,jdbcType=TIMESTAMP}
+        order by bill_time desc
+    </select>
+
+    <!--
+    根据ID查询退款账单
+    查询指定ID的退款账单详情
+    -->
+    <select id="selectRefundBillById" resultMap="RefundBillResultMap">
+        select *
+        from refund_bill
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--
+    根据支出账单ID查询退款账单
+    查询指定支出账单的所有退款账单，按时间倒序排序
+    -->
+    <select id="selectRefundBillByPayBillId" resultMap="RefundBillResultMap">
+        select *
+        from refund_bill
+        where pay_bill_id = #{payBillId,jdbcType=INTEGER}
+        order by bill_time desc
+    </select>
+
+    <!--
+    根据账本ID删除退款账单
+    删除指定账本的所有退款账单
+    -->
+    <delete id="deleteRefundBillByBookId" parameterType="Integer">
+        delete
+        from refund_bill
+        where book_id = #{bookId,jdbcType=INTEGER}
+    </delete>
+</mapper>
