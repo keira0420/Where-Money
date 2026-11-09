@@ -19,7 +19,7 @@ Java 21 / Spring Boot 3.5 / MyBatis / MySQL / Redis / Spring AI / Vue 3。
 | 月报 | 当前及上月统计、前五消费分类、AI 解读、显式基础统计降级、数据指纹缓存 |
 | 工程保障 | Redis Lua 限流、模型并发隔离和超时、审计脱敏、缓存失效重试、健康检查、OpenAPI |
 
-**没有使用 MQ、向量数据库或 Agent 工具规划。** 动态账户与分类 Prompt 不等于完整 RAG。参见 [RAG 与 Agent 深挖](docs/RAG-AGENT.md)。
+**没有使用 MQ、向量数据库或 Agent 工具规划。** 动态账户与分类 Prompt 不等于完整 RAG。
 
 ## 主要链路
 
@@ -101,8 +101,6 @@ pwsh -File scripts/smoke.ps1 -LiveAi   # 另验证真实模型及月报，服务
 
 1. [架构、数据模型、缓存与事务](docs/ARCHITECTURE.md)
 2. [接口与本地验收](docs/VERIFICATION.md)
-3. [口语化 STAR 与后端八股追问](docs/INTERVIEW.md)
-4. [RAG、Agent、大模型深挖](docs/RAG-AGENT.md)
 
 ## 项目边界与来源
 

@@ -1,5 +1,7 @@
 .runtime/
 output/
+docs/INTERVIEW.md
+docs/RAG-AGENT.md
 **/.git/
 **/target/
 **/node_modules/
